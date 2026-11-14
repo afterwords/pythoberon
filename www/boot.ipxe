@@ -1,0 +1,49 @@
+#!ipxe
+# boot.ipxe: iPXE network boot script for AMD BC-250 cluster nodes.
+# Chained by UEFI firmware via router dnsmasq -> ipxe.efi -> HTTP.
+
+# Allow operator to press Ctrl-B for interactive iPXE shell (2-second timeout)
+prompt --key 0x02 --timeout 2000 Press Ctrl-B for the iPXE command line... && shell ||
+
+# Acquire / refresh network configuration via DHCP
+dhcp || goto boot_failed
+
+# Server IP comes from DHCP next-server option (set by dnsmasq)
+isset ${next-server} || goto boot_failed
+set srv ${next-server}
+set arch_boot http://${srv}/arch/arch/boot/x86_64
+
+echo ================================================================
+echo Booting AMD BC-250 Provisioning Environment
+echo Server:  ${srv}
+echo Node MAC:${mac}
+echo Node IP: ${ip}
+echo ================================================================
+
+# -----------------------------------------------------------------------------
+# DELIBERATE REINSTALL OVERRIDE:
+# Leave blank for standard/safe boot. By default, install.sh aborts with
+# exit 0 if an existing filesystem labeled 'ROOT' is present on the disk.
+#
+# To force a full reinstall and wipe the target NVMe drive, uncomment:
+# set extra_cmdline reinstall
+# -----------------------------------------------------------------------------
+set extra_cmdline
+
+# Kernel and initramfs load via HTTP
+echo Fetching Linux kernel (vmlinuz-linux)...
+kernel ${arch_boot}/vmlinuz-linux initrd=initramfs-linux.img archiso_http_srv=http://${srv}/arch/ archisobasedir=arch ip=dhcp script=http://${srv}/provision/install.sh ${extra_cmdline} BOOTIF=01-${mac:hexhyp}
+
+echo Fetching initramfs (initramfs-linux.img)...
+initrd ${arch_boot}/initramfs-linux.img
+
+echo Booting kernel into Arch Linux live installer...
+boot || goto boot_failed
+
+:boot_failed
+echo
+echo [ERROR] Network boot failed! Dropping to emergency iPXE shell in 15 seconds...
+echo [TIP]   Verify that the web container is running on ${srv} (make logs)
+echo [TIP]   and that the Arch ISO has been extracted (make stage).
+sleep 15
+shell

@@ -1,0 +1,3 @@
+# Placeholder to preserve directory in git.
+# Run 'make stage' or 'scripts/stage-iso.sh' to extract the Arch ISO contents here.
+

@@ -1,0 +1,6 @@
+#!ipxe
+# autoexec.ipxe: Automatically executed by iPXE when booted via UEFI HTTP Boot.
+# Chains to the main cluster boot script (boot.ipxe) located in the same directory.
+
+chain --autofree boot.ipxe
+

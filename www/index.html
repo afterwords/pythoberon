@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AMD BC-250 Cluster PXE Provisioning</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 3rem; background: #0d1117; color: #c9d1d9; }
+    h1 { color: #58a6ff; }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { list-style-type: square; line-height: 1.8; }
+    .badge { display: inline-block; padding: 0.25rem 0.5rem; background: #238636; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>AMD BC-250 Cluster Provisioning Server</h1>
+  <p><span class="badge">ONLINE</span> Serving PXE bootloader, Arch Linux ISO rootfs, and provisioning automation.</p>
+  <h2>Endpoints & Artifacts</h2>
+  <ul>
+    <li><a href="/boot.ipxe">boot.ipxe</a> &mdash; Master iPXE boot script</li>
+    <li><a href="/autoexec.ipxe">autoexec.ipxe</a> &mdash; UEFI HTTP Boot auto-exec script</li>
+    <li><a href="/ipxe.efi">ipxe.efi</a> &mdash; x86_64 UEFI iPXE binary</li>
+    <li><a href="/provision/install.sh">provision/install.sh</a> &mdash; Unattended Arch installer</li>
+    <li><a href="/provision/convert.sh">provision/convert.sh</a> &mdash; CachyOS & hardware conversion script</li>
+    <li><a href="/provision/setup-llama-server.sh">provision/setup-llama-server.sh</a> &mdash; llama.cpp cluster setup script</li>
+    <li><a href="/provision/authorized_keys">provision/authorized_keys</a> &mdash; Deployed SSH public key</li>
+  </ul>
+</body>
+</html>
+

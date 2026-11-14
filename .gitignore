@@ -1,0 +1,29 @@
+# Git ignore for PXE provisioning repository
+
+# Downloaded bootloader & ISO artifacts (must not be committed)
+tftp/ipxe.efi
+tftp/*.efi
+www/ipxe.efi
+iso/
+*.iso
+*.iso.sig
+sha256sums.txt
+b2sums.txt
+
+# Extracted ISO filesystem tree (served via HTTP, ~1.5 GB+)
+www/arch/*
+!www/arch/.gitkeep
+
+# Temporary files and caches
+*.tmp
+*.bak
+*.swp
+*~
+.cache/
+.DS_Store
+
+# Local overrides
+.env
+.env.local
+www/provision/config.env
+

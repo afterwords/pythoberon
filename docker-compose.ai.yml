@@ -1,0 +1,53 @@
+name: pythoberon
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: bc250-open-webui
+    restart: unless-stopped
+    ports:
+      - "${OPENWEBUI_PORT:-3000}:8080"
+    networks:
+      - ai-net
+    environment:
+      # Llama.cpp OpenAI-compatible API connection (Node 1)
+      - OPENAI_API_BASE_URLS=http://${NODE1_IP}:${LLAMA_SERVER_PORT:-8080}/v1
+      - OPENAI_API_KEYS=${LLAMA_API_KEY:-bc250-secret-key}
+      
+      # Web Search configuration via SearXNG
+      - ENABLE_RAG_WEB_SEARCH=${ENABLE_WEB_SEARCH:-true}
+      - RAG_WEB_SEARCH_ENGINE=searxng
+      - SEARXNG_QUERY_URL=http://searxng:3001/search?q=<query>
+      - RAG_WEB_SEARCH_RESULT_COUNT=3
+      
+      # Model and UI defaults
+      - DEFAULT_MODELS=${DEFAULT_MODEL:-qwen3-6-35b}
+      - MODEL_FILTER_LIST=${DEFAULT_MODEL:-qwen3-6-35b}
+      - WEBUI_AUTH=${WEBUI_AUTH:-true}
+      - AIOHTTP_CLIENT_TIMEOUT=300
+      - ENABLE_DIRECT_CONNECTIONS=true
+    volumes:
+      - openwebui-data:/app/data
+    depends_on:
+      - searxng
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: bc250-searxng
+    restart: unless-stopped
+    networks:
+      - ai-net
+    ports:
+      - "${SEARXNG_PORT:-3001}:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:${SEARXNG_PORT:-8080}/
+    volumes:
+      - searxng-data:/etc/searxng
+
+networks:
+  ai-net:
+    driver: bridge
+
+volumes:
+  openwebui-data:
+  searxng-data:
